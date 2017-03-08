@@ -37,6 +37,7 @@ namespace SqlToBaseXConverter
             basexConnector.Connect(nazwaBazy);
             Converter converter = new Converter(basexConnector, sql, nazwaBazy, dh);
             converter.SqlToXml();
+            
             //Console.WriteLine("To jest to!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             //Console.WriteLine(dh.tablesInfo["Towary"].Item1);
             /*

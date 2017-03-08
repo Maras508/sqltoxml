@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BaseXClient;
 using System.Data.SqlClient;
 using System.IO;
+using System.Diagnostics;
 
 namespace SqlToBaseXConverter
 {
@@ -16,6 +17,7 @@ namespace SqlToBaseXConverter
         private string databaseName;
         private DatabaseHelper databaseHelper;
         private Query query;
+        private Stopwatch stopwatch;
 
         public Converter(BaseXConnector baseXConnect, SqlConnector sqlConnect, string databaseName, DatabaseHelper databaseHelper)
         {
@@ -23,12 +25,16 @@ namespace SqlToBaseXConverter
             this.sqlConnect = sqlConnect;
             this.databaseName = databaseName;
             this.databaseHelper = databaseHelper;
+            this.stopwatch = new Stopwatch();
         }
         public void SqlToXml()
         {
-            foreach(var dictionaryElement in this.databaseHelper.tablesInfo)
+            foreach (var dictionaryElement in this.databaseHelper.tablesInfo)
             {
-                ReadSqlWriteToXml(GetSingleSqlTable(dictionaryElement.Key), dictionaryElement.Value.Item2, dictionaryElement.Key);
+                //if (dictionaryElement.Key == "FactResellerSales")
+                //{ 
+                    ReadSqlWriteToXml(GetSingleSqlTable(dictionaryElement.Key), dictionaryElement.Value.Item2, dictionaryElement.Key);
+               // }
             }
         }
         private SqlDataReader GetSingleSqlTable(string tableName)
@@ -46,10 +52,14 @@ namespace SqlToBaseXConverter
         {
             StringBuilder xqueryElementToInsert = new StringBuilder();
             this.baseXConnect.session.Execute("open " + this.databaseName);
+
+            Console.WriteLine(tableName + "!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             try
             {
+                //reader.AsParallel();
                 while (reader.Read())
                 {
+                    
                     xqueryElementToInsert.Clear();
 
                     xqueryElementToInsert.Append("<");
@@ -80,7 +90,10 @@ namespace SqlToBaseXConverter
                     string input = "let $node := " + xqueryElementToInsert.ToString() + " return insert node " + "$node" +  " into /"+ this.databaseName;
                     try
                     {
+                        this.stopwatch.Start();
                         this.baseXConnect.session.Query(input).Execute();
+                        this.stopwatch.Stop();
+                        Console.WriteLine("Czas: " + stopwatch.Elapsed);
                         /*
                         while (query.More())
                         {

@@ -22,7 +22,7 @@ namespace SqlToBaseXConverter
         {
             List<string> tables = new List<string>();
 
-            SqlCommand command = new SqlCommand("Select * From INFORMATION_SCHEMA.TABLES", sqlconnector.connection);
+            SqlCommand command = new SqlCommand("Select * From INFORMATION_SCHEMA.TABLES Where TABLE_TYPE = 'BASE TABLE'", sqlconnector.connection);
 
             sqlconnector.connection.Open();
             SqlDataReader reader = command.ExecuteReader();
