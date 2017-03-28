@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BaseXClient.cs" />
     <Compile Include="BaseXConnector.cs" />
+    <Compile Include="BaseXConverter.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="DatabaseConnector.cs" />
     <Compile Include="DatabaseHelper.cs" />

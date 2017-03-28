@@ -6,15 +6,10 @@ using System.Threading.Tasks;
 
 namespace SqlToBaseXConverter
 {
-    abstract class DatabaseConnector
+      class DatabaseConnector
     {
-      public virtual void Connect(string databaseName)
-        {
-
-        }
-      public virtual void Connect()
-        {
-
-        }
+      
+      public virtual void Connect(string databaseName){}
+      public virtual void Connect(){}
     }
 }

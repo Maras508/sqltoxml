@@ -11,6 +11,20 @@ namespace SqlToBaseXConverter
     {
         private string connectionString;
         public SqlConnection connection;
+        public static SqlConnector sqlConnector = null;
+
+        public static SqlConnector GetConnector()
+        {
+            if (sqlConnector == null)
+            {
+                sqlConnector = new SqlConnector();
+                return sqlConnector;
+            }
+            else
+            {
+                return sqlConnector;
+            }
+        }
 
         public override void Connect(string databaseName)
         {

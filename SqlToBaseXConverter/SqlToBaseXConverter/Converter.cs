@@ -10,114 +10,50 @@ using System.Diagnostics;
 
 namespace SqlToBaseXConverter
 {
-    class Converter
+    abstract class Converter
     {
-        private BaseXConnector baseXConnect;
-        private SqlConnector sqlConnect;
-        private string databaseName;
-        private DatabaseHelper databaseHelper;
-        private Query query;
-        private Stopwatch stopwatch;
+        public SqlConnector sqlConnect;
+        public string databaseName;
+        public DatabaseHelper databaseHelper;
+        public Form1 form1;
+        public Query query;
+        //private Stopwatch stopwatch;
+        
+        
 
-        public Converter(BaseXConnector baseXConnect, SqlConnector sqlConnect, string databaseName, DatabaseHelper databaseHelper)
+        public Converter(SqlConnector sqlConnect, string databaseName, DatabaseHelper databaseHelper, Form1 form1)
         {
-            this.baseXConnect = baseXConnect;
             this.sqlConnect = sqlConnect;
             this.databaseName = databaseName;
             this.databaseHelper = databaseHelper;
-            this.stopwatch = new Stopwatch();
+            this.form1 = form1;
+            //this.stopwatch = new Stopwatch();
+            
         }
-        public void SqlToXml()
+
+        public virtual void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize) { }
+        public virtual void Convert(bool mode)
         {
+            int tableCounter = 0;
             foreach (var dictionaryElement in this.databaseHelper.tablesInfo)
             {
-                //if (dictionaryElement.Key == "FactResellerSales")
-                //{ 
-                    ReadSqlWriteToXml(GetSingleSqlTable(dictionaryElement.Key), dictionaryElement.Value.Item2, dictionaryElement.Key);
-               // }
+                tableCounter++;
+                form1.setActualTable(tableCounter.ToString() + " (" + dictionaryElement.Key + ")");
+                form1.Refresh();
+                ReadAndConvertSingleSqlTable(GetSingleSqlTable(dictionaryElement.Key), dictionaryElement.Value.Item2, dictionaryElement.Key, dictionaryElement.Value.Item1);
+                
             }
         }
-        private SqlDataReader GetSingleSqlTable(string tableName)
+        public SqlDataReader GetSingleSqlTable(string tableName)
         {
             SqlCommand command = new SqlCommand("Select * From " + tableName + ";", this.sqlConnect.connection);
 
             
             this.sqlConnect.connection.Open();
             SqlDataReader reader = command.ExecuteReader();
-            //this.sqlConnect.connection.Close();
 
             return reader;
         }
-        private void ReadSqlWriteToXml(SqlDataReader reader, List<string> columnNames, string tableName)
-        {
-            StringBuilder xqueryElementToInsert = new StringBuilder();
-            this.baseXConnect.session.Execute("open " + this.databaseName);
-
-            Console.WriteLine(tableName + "!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            try
-            {
-                //reader.AsParallel();
-                while (reader.Read())
-                {
-                    
-                    xqueryElementToInsert.Clear();
-
-                    xqueryElementToInsert.Append("<");
-                    xqueryElementToInsert.Append(tableName);
-                    xqueryElementToInsert.Append(">");
-
-                    foreach (string name in columnNames)
-                    {
-                        xqueryElementToInsert.Append("<");
-                        xqueryElementToInsert.Append(name);
-                        xqueryElementToInsert.Append(">");
-
-                        xqueryElementToInsert.Append(reader[name].ToString().Replace("&","and"));
-
-                        xqueryElementToInsert.Append("<");
-                        xqueryElementToInsert.Append("/");
-                        xqueryElementToInsert.Append(name);
-                        xqueryElementToInsert.Append(">");
-
-                    }
-
-                    xqueryElementToInsert.Append("<");
-                    xqueryElementToInsert.Append("/");
-                    xqueryElementToInsert.Append(tableName);
-                    xqueryElementToInsert.Append(">");
-
-
-                    string input = "let $node := " + xqueryElementToInsert.ToString() + " return insert node " + "$node" +  " into /"+ this.databaseName;
-                    try
-                    {
-                        this.stopwatch.Start();
-                        this.baseXConnect.session.Query(input).Execute();
-                        this.stopwatch.Stop();
-                        Console.WriteLine("Czas: " + stopwatch.Elapsed);
-                        /*
-                        while (query.More())
-                        {
-                            Console.WriteLine(query.Next());
-
-                        }
-                        query.Close();
-                        */
-                    }
-                    catch (IOException e)
-                    {
-                        // print exception
-                        Console.WriteLine(e.Message);
-                    }
-                    xqueryElementToInsert.Clear();
-                }
-            }
-            finally
-            {
-                // Always call Close when done reading.
-                reader.Close();
-               // this.baseXConnect.session.Close();
-                this.sqlConnect.connection.Close();
-            }
-        }
+        
     }
 }
