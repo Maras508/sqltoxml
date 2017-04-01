@@ -20,26 +20,15 @@ namespace SqlToBaseXConverter
         public Form1()
         {
             InitializeComponent();
+            converterFacade = new ConverterFacade(this);
         }
 
-        private DatabaseHelper databaseHelper;
+        private ConverterFacade converterFacade;
 
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MongoDBConnector.GetConnector().Connect("testowa_baza");
-            var collection = MongoDBConnector.GetConnector().database.GetCollection<BsonDocument>("dane");
-            new BsonElement("imie", "Patryk");
-            var d1 = new BsonDocument
-            {
-                {"imie","Robert" },
-                {"nazwisko","Lewandowski" }
-            };
-           // collection.InsertOne(d1);
-
-            var filter = Builders<BsonDocument>.Filter.Eq("imie", "Robert") | Builders<BsonDocument>.Filter.Eq("imie", "Marek");
-            var document = collection.Find(filter).ToList();
-           // string a = document.ToString();
+           
         }
 
         private void bt_loadDatabase_Click(object sender, EventArgs e)
@@ -48,13 +37,7 @@ namespace SqlToBaseXConverter
 
             if (nazwaBazy != "")
             {
-                //sqlConnector = SqlConnector.GetConnector();
-                SqlConnector.GetConnector().Connect(nazwaBazy);
-
-                databaseHelper = new DatabaseHelper(SqlConnector.GetConnector());
-                databaseHelper.GetTablesInfo();
-
-                lb_quantityOfTables.Text = databaseHelper.tablesInfo.Count().ToString();
+                converterFacade.loadDatabase(nazwaBazy);
             }
             else
             {
@@ -87,18 +70,13 @@ namespace SqlToBaseXConverter
         {
             if(rb_sqlToBasex.Checked)
             {
-                BaseXConnector.GetConnector().Connect();
-
-                
-                Converter converter = new BaseXConverter(BaseXConnector.GetConnector(), SqlConnector.GetConnector(), tx_databaseName.Text, databaseHelper, this);
-
                 if (rb_modeSemiAutomatic.Checked)
                 {
-                    converter.Convert(false);
+                    converterFacade.convertSqlToBasex(false);
                 }
                 else if(rb_modeAutomatic.Checked)
                 {
-                    converter.Convert(true);
+                    converterFacade.convertSqlToBasex(true);
                 }
                 else
                 {
@@ -108,9 +86,7 @@ namespace SqlToBaseXConverter
             }
             else if(rb_sqlToMongoDB.Checked)
             {
-                MongoDBConnector.GetConnector().Connect(tx_databaseName.Text);
-                Converter converter = new MongoDBConverter(MongoDBConnector.GetConnector(), SqlConnector.GetConnector(), tx_databaseName.Text, databaseHelper, this);
-                converter.Convert(false);
+                converterFacade.convertSqlToMongoDB();
             }
             else
             {
@@ -140,6 +116,10 @@ namespace SqlToBaseXConverter
         {
             string time = String.Format("Czas konwersji to: {0:00} godzin {1:00} minut {2:00} sekund i {3:00} milisekund",timeOfConvertionExecution.Hours,timeOfConvertionExecution.Minutes,timeOfConvertionExecution.Seconds,timeOfConvertionExecution.Milliseconds);
             MessageBox.Show("Zadanie wykonane! " + time);
+        }
+        public void setQuantityOfTables(int quantity)
+        {
+            lb_quantityOfTables.Text = quantity.ToString();
         }
     }
 }
