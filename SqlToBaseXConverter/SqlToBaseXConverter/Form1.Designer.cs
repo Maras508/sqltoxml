@@ -50,6 +50,7 @@
             this.lb_actualRow = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tx_actualTable = new System.Windows.Forms.TextBox();
+            this.progress = new System.Windows.Forms.ProgressBar();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -263,11 +264,19 @@
             this.tx_actualTable.Size = new System.Drawing.Size(100, 20);
             this.tx_actualTable.TabIndex = 22;
             // 
+            // progress
+            // 
+            this.progress.Location = new System.Drawing.Point(15, 195);
+            this.progress.Name = "progress";
+            this.progress.Size = new System.Drawing.Size(435, 23);
+            this.progress.TabIndex = 23;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(681, 262);
+            this.Controls.Add(this.progress);
             this.Controls.Add(this.tx_actualTable);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lb_actualRow);
@@ -321,6 +330,7 @@
         private System.Windows.Forms.Label lb_actualRow;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tx_actualTable;
+        private System.Windows.Forms.ProgressBar progress;
     }
 }
 

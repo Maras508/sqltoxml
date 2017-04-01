@@ -32,7 +32,12 @@ namespace SqlToBaseXConverter
                 while (reader.Read())
                 {
                     rowCounter++;
+                    totalRowCounter++;
+
                     form1.setActualRow(rowCounter.ToString());
+                    float progress = ((float)totalRowCounter / totalRowAmount) * 100;
+                    form1.setProgress((int)progress);
+
                     if (rowCounter % 50 == 0)
                     {
                         form1.Refresh();

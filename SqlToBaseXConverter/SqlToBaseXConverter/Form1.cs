@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,8 +27,19 @@ namespace SqlToBaseXConverter
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
-            
+            MongoDBConnector.GetConnector().Connect("testowa_baza");
+            var collection = MongoDBConnector.GetConnector().database.GetCollection<BsonDocument>("dane");
+            new BsonElement("imie", "Patryk");
+            var d1 = new BsonDocument
+            {
+                {"imie","Robert" },
+                {"nazwisko","Lewandowski" }
+            };
+           // collection.InsertOne(d1);
+
+            var filter = Builders<BsonDocument>.Filter.Eq("imie", "Robert") | Builders<BsonDocument>.Filter.Eq("imie", "Marek");
+            var document = collection.Find(filter).ToList();
+           // string a = document.ToString();
         }
 
         private void bt_loadDatabase_Click(object sender, EventArgs e)
@@ -77,8 +90,6 @@ namespace SqlToBaseXConverter
                 BaseXConnector.GetConnector().Connect();
 
                 
-                //setActualTable("None");
-                
                 Converter converter = new BaseXConverter(BaseXConnector.GetConnector(), SqlConnector.GetConnector(), tx_databaseName.Text, databaseHelper, this);
 
                 if (rb_modeSemiAutomatic.Checked)
@@ -97,7 +108,9 @@ namespace SqlToBaseXConverter
             }
             else if(rb_sqlToMongoDB.Checked)
             {
-
+                MongoDBConnector.GetConnector().Connect(tx_databaseName.Text);
+                Converter converter = new MongoDBConverter(MongoDBConnector.GetConnector(), SqlConnector.GetConnector(), tx_databaseName.Text, databaseHelper, this);
+                converter.Convert(false);
             }
             else
             {
@@ -118,6 +131,15 @@ namespace SqlToBaseXConverter
         public void setActualRow(string text)
         {
             lb_actualRow.Text = text;
+        }
+        public void setProgress(int value)
+        {
+            progress.Value = value;
+        }
+        public void setTimeInfo(TimeSpan timeOfConvertionExecution)
+        {
+            string time = String.Format("Czas konwersji to: {0:00} godzin {1:00} minut {2:00} sekund i {3:00} milisekund",timeOfConvertionExecution.Hours,timeOfConvertionExecution.Minutes,timeOfConvertionExecution.Seconds,timeOfConvertionExecution.Milliseconds);
+            MessageBox.Show("Zadanie wykonane! " + time);
         }
     }
 }
