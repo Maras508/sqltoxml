@@ -13,12 +13,12 @@ namespace SqlToBaseXConverter
     {
         private MongoDBConnector mongoDBConnector;
         private BsonDocument bsonDocument;
-        private BsonElement bsonElement;
         
 
         public MongoDBConverter(MongoDBConnector mongoDBConnector, SqlConnector sqlConnect, string databaseName, DatabaseHelper databaseHelper, Form1 form1) : base(sqlConnect, databaseName, databaseHelper, form1)
         {
             this.mongoDBConnector = mongoDBConnector;
+            this.bsonDocument = new BsonDocument();
         }
 
         public override void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize)
@@ -44,16 +44,18 @@ namespace SqlToBaseXConverter
                     form1.Refresh();
                 }
 
-                
 
-                bsonDocument = new BsonDocument();
+
+                
 
 
                 for (int j = 0; j < reader.FieldCount; j++)
                 {
                     Type t = reader[j].GetType();
                     if (reader[j].GetType() == typeof(String))
+                    { 
                         bsonDocument.Add(new BsonElement(reader.GetName(j), reader[j].ToString()));
+                    }
                     else if ((reader[j].GetType() == typeof(Int32)))
                     {
                         bsonDocument.Add(new BsonElement(reader.GetName(j), BsonValue.Create(reader.GetInt32(j))));
@@ -106,7 +108,8 @@ namespace SqlToBaseXConverter
 
                 var collection = mongoDBConnector.database.GetCollection<BsonDocument>(tableName);
                 collection.InsertOne(bsonDocument);
-                //tableName
+                bsonDocument.Clear();
+                
 
             }
             reader.Close();
