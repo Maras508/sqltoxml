@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SqlToBaseXConverter
 {
-    class BaseXConverter : Converter
+    sealed class BaseXConverter : Converter
     {
         private BaseXConnector baseXConnect;
         private StringBuilder xqueryElementToInsert;
@@ -19,16 +19,16 @@ namespace SqlToBaseXConverter
             this.xqueryElementToInsert = new StringBuilder();
         }
 
-        public override void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize)
+        protected override void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize)
         {
             int rowCounter = 0;
             form1.setRowAmount(tableSize.ToString());
             form1.Refresh();
 
-            Console.WriteLine(tableName + "!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            
             try
             {
-                //reader.AsParallel();
+               
                 while (reader.Read())
                 {
                     rowCounter++;
@@ -73,35 +73,18 @@ namespace SqlToBaseXConverter
                     string input = "let $node := " + xqueryElementToInsert.ToString() + " return insert node " + "$node" + " into /" + this.databaseName;
                     try
                     {
-                        /*
-                        this.stopwatch.Start();
-                        this.baseXConnect.session.Query(input).Execute();
-                        this.stopwatch.Stop();
-                        Console.WriteLine("Czas: " + stopwatch.Elapsed);
-                        */
-                        /*
-                        while (query.More())
-                        {
-                            Console.WriteLine(query.Next());
-
-                        }
-                        query.Close();
-                        */
-                        File.AppendAllText("przekonwertowanaBaza.xml", this.xqueryElementToInsert.ToString());
+                       File.AppendAllText("przekonwertowanaBaza.xml", this.xqueryElementToInsert.ToString());
                     }
                     catch (IOException e)
                     {
-                        // print exception
                         Console.WriteLine(e.Message);
                     }
-                    //xqueryElementToInsert.Clear();
+                   
                 }
             }
             finally
             {
-                // Always call Close when done reading.
                 reader.Close();
-                // this.baseXConnect.session.Close();
                 this.sqlConnect.connection.Close();
             }
         }

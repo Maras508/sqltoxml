@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SqlToBaseXConverter
 {
-    class MongoDBConverter : Converter
+    sealed class MongoDBConverter : Converter
     {
         private MongoDBConnector mongoDBConnector;
         private BsonDocument bsonDocument;
@@ -21,15 +21,13 @@ namespace SqlToBaseXConverter
             this.bsonDocument = new BsonDocument();
         }
 
-        public override void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize)
+        protected override void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize)
         {
             int rowCounter = 0;
             form1.setRowAmount(tableSize.ToString());
             form1.Refresh();
 
-            Console.WriteLine(tableName + "!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-            //reader.AsParallel();
+            
             while (reader.Read())
             {
                 rowCounter++;
@@ -43,10 +41,6 @@ namespace SqlToBaseXConverter
                 {
                     form1.Refresh();
                 }
-
-
-
-                
 
 
                 for (int j = 0; j < reader.FieldCount; j++)

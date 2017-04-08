@@ -12,15 +12,15 @@ namespace SqlToBaseXConverter
 {
     abstract class Converter
     {
-        public SqlConnector sqlConnect;
-        public string databaseName;
-        public DatabaseHelper databaseHelper;
-        public Form1 form1;
-        public Query query;
-        public int totalRowAmount;
-        public int totalRowCounter;
-        public Stopwatch stopWatch;
-        //private Stopwatch stopwatch;
+        protected SqlConnector sqlConnect;
+        protected string databaseName;
+        protected DatabaseHelper databaseHelper;
+        protected Form1 form1;
+        protected Query query;
+        protected int totalRowAmount;
+        protected int totalRowCounter;
+        protected Stopwatch stopWatch;
+        
         
         
 
@@ -30,11 +30,9 @@ namespace SqlToBaseXConverter
             this.databaseName = databaseName;
             this.databaseHelper = databaseHelper;
             this.form1 = form1;
-            //this.stopwatch = new Stopwatch();
-            
         }
 
-        public virtual void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize) { }
+        protected virtual void ReadAndConvertSingleSqlTable(SqlDataReader reader, List<string> columnNames, string tableName, int tableSize) { }
         public virtual void Convert(bool mode)
         {
             stopWatch = new Stopwatch();
@@ -60,7 +58,7 @@ namespace SqlToBaseXConverter
             form1.setTimeInfo(stopWatch.Elapsed);
             form1.Refresh();
         }
-        public SqlDataReader GetSingleSqlTable(string tableName)
+        protected SqlDataReader GetSingleSqlTable(string tableName)
         {
             SqlCommand command = new SqlCommand("Select * From " + tableName + ";", this.sqlConnect.connection);
 

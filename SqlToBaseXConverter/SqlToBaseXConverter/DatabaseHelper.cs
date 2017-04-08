@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SqlToBaseXConverter
 {
-    class DatabaseHelper
+    sealed class DatabaseHelper
     {
         private List<string> tablesNames;
         public Dictionary<string, Tuple<int, List<string>>> tablesInfo;
@@ -35,7 +35,6 @@ namespace SqlToBaseXConverter
             }
             finally
             {
-                // Always call Close when done reading.
                 reader.Close();
                 sqlconnector.connection.Close();
             }
@@ -50,7 +49,6 @@ namespace SqlToBaseXConverter
 
             foreach(string name in tablesNames)
             {
-                //pobieranie ilości wierszy w danej tabeli
                 SqlCommand command = new SqlCommand("Select Count(*) AS number From " + name + ";", sqlconnector.connection);
 
                 sqlconnector.connection.Open();
@@ -64,7 +62,6 @@ namespace SqlToBaseXConverter
                 }
                 finally
                 {
-                    // Always call Close when done reading.
                     reader.Close();
                     sqlconnector.connection.Close();
                 }
@@ -85,7 +82,6 @@ namespace SqlToBaseXConverter
                 }
                 finally
                 {
-                    // Always call Close when done reading.
                     reader2.Close();
                     sqlconnector.connection.Close();
                 }
