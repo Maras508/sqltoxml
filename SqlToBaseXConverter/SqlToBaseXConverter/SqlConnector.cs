@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace SqlToBaseXConverter
 {
@@ -28,8 +30,16 @@ namespace SqlToBaseXConverter
 
         public override void Connect(string databaseName)
         {
-            this.connectionString = "Data Source=MAREK-KOMPUTER;Initial Catalog=" + databaseName + ";Integrated Security=true;";
-            this.connection = new SqlConnection(connectionString);
+            GetConnectionSettings();
+            connectionString = connectionString.Replace("###databaseName###", databaseName);
+            connection = new SqlConnection(connectionString);
+        }
+        protected override void GetConnectionSettings()
+        {
+            XmlReader xmlReader = XmlReader.Create(new StreamReader("connectionSettings.xml"));
+
+            xmlReader.ReadToFollowing("sql");
+            this.connectionString = xmlReader.ReadElementContentAsString();
         }
     }
 }

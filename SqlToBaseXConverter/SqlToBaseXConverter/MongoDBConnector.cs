@@ -1,9 +1,11 @@
 ﻿using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace SqlToBaseXConverter
 {
@@ -12,6 +14,7 @@ namespace SqlToBaseXConverter
         public static MongoDBConnector mongoDBConnector;
         private MongoClient client;
         public IMongoDatabase database;
+        private string connectionString;
 
         public static MongoDBConnector GetConnector()
         {
@@ -28,8 +31,17 @@ namespace SqlToBaseXConverter
 
         public override void Connect(string databaseName)
         {
-            client = new MongoClient();
+            GetConnectionSettings();
+            client = new MongoClient(connectionString);
             database = client.GetDatabase(databaseName);
+        }
+
+        protected override void GetConnectionSettings()
+        {
+            XmlReader xmlReader = XmlReader.Create(new StreamReader("connectionSettings.xml"));
+
+            xmlReader.ReadToFollowing("mongoDB");
+            this.connectionString = xmlReader.ReadElementContentAsString();
         }
     }
 }
