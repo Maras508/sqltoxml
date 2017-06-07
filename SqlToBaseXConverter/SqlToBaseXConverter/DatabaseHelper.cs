@@ -49,7 +49,7 @@ namespace SqlToBaseXConverter
 
             foreach(string name in tablesNames)
             {
-                SqlCommand command = new SqlCommand("Select Count(*) AS number From " + name + ";", sqlconnector.connection);
+                SqlCommand command = new SqlCommand("Select Count(*) AS number From [" + name + "];", sqlconnector.connection);
 
                 sqlconnector.connection.Open();
                 SqlDataReader reader = command.ExecuteReader();

@@ -1,0 +1,10 @@
+<connectionSettings>
+	<sql>Data Source=MAREK-KOMPUTER;Initial Catalog="###databaseName###";Integrated Security=true;</sql>
+	<baseX>
+			<host>localhost</host>
+			<port>1984</port>
+			<userName>admin</userName>
+			<password>admin</password>
+	</baseX>
+	<mongoDB>mongodb://localhost:27017</mongoDB>
+</connectionSettings>

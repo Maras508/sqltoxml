@@ -46,7 +46,7 @@ namespace SqlToBaseXConverter
                     xqueryElementToInsert.Clear();
 
                     xqueryElementToInsert.Append("<");
-                    xqueryElementToInsert.Append(tableName);
+                    xqueryElementToInsert.Append(tableName.Replace(' ','_'));
                     xqueryElementToInsert.Append(">");
 
                     foreach (string name in columnNames)
@@ -66,7 +66,7 @@ namespace SqlToBaseXConverter
 
                     xqueryElementToInsert.Append("<");
                     xqueryElementToInsert.Append("/");
-                    xqueryElementToInsert.Append(tableName);
+                    xqueryElementToInsert.Append(tableName.Replace(' ', '_'));
                     xqueryElementToInsert.Append(">");
 
 

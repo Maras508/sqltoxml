@@ -60,7 +60,7 @@ namespace SqlToBaseXConverter
         }
         protected SqlDataReader GetSingleSqlTable(string tableName)
         {
-            SqlCommand command = new SqlCommand("Select * From " + tableName + ";", this.sqlConnect.connection);
+            SqlCommand command = new SqlCommand("Select * From [" + tableName + "];", this.sqlConnect.connection);
 
             if (this.sqlConnect.connection.State != System.Data.ConnectionState.Open)
             {
